@@ -9,3 +9,5 @@ routes.post('/login', controllers.loginUser);
 routes.get('/admin', passport.authenticate('jwt', { session: false}), (req,res)=>{
     return res.json({'msg': 'Hello ! '+req.user.email+' Welcome to your admin panel !!!'});
 });
+
+module.exports = routes;
