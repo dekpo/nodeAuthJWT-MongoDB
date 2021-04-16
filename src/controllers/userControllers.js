@@ -12,7 +12,7 @@ function createToken(user){
 module.exports.registerUser = (req, res) =>{
     // si email et password ne sont pas présents
     if(!req.body.email || !req.body.password) {
-        return res.json({'msg': 'Email and password are mandatory !!!'});
+        return res.status(400).json({'msg': 'Email and password are mandatory !!!'});
     }
     UserModel.findOne({ email: req.body.email }, (err, user)=>{
         if (err) {
@@ -20,12 +20,12 @@ module.exports.registerUser = (req, res) =>{
         }
         // on ne peut pas s'enregistrer 2x avec le meme email
         if (user){
-            return res.json({'msg': 'This user already exists'});
+            return res.status(400).json({'msg': 'This user already exists'});
         }
         // tout est bon pour créer le nouvel utilisateur
         const newUser = UserModel(req.body);
         newUser.save((err,user)=>{
-            if (err) res.json({'msg':err});
+            if (err) res.status(400).json({'msg':err});
             console.log('New User Registred :', req.body);
             res.json(user);
         });
@@ -36,7 +36,7 @@ module.exports.registerUser = (req, res) =>{
 module.exports.loginUser = (req, res) => {
     // si email et password ne sont pas présents
     if(!req.body.email || !req.body.password) {
-        return res.json({'msg': 'Email and password are mandatory !!!'});
+        return res.status(400).json({'msg': 'Email and password are mandatory !!!'});
     }
     UserModel.findOne({ email: req.body.email }, (err, user)=>{
         if (err) {
@@ -44,7 +44,7 @@ module.exports.loginUser = (req, res) => {
         }
         // on ne trouve pas l'utilisateur
         if (!user){
-            return res.json({'msg': 'This user does NOT exists !'});
+            return res.status(400).json({'msg': 'This user does NOT exists !'});
         }
         // on vérifie le password avec la methode compare
         user.comparePassword(req.body.password, (err, isMatch) => {
@@ -53,7 +53,7 @@ module.exports.loginUser = (req, res) => {
                 console.log('Utilisateur retrouvé connecté !!! ',req.body.email);
                 return res.json({ token: createToken(user) });
             } else {
-                return res.json({'msg': 'Wrong email or password...'});
+                return res.status(400).json({'msg': 'Wrong email or password...'});
             }
         });
     });
